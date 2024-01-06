@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <!-- Link to a CSS file -->
+</head>
+<body>
+    <h2>Login</h2>
+    <p id="error" style="color: red; display: none;">Invalid credentials. Please try again.</p>
+    <form id="loginForm" action="/login" method="post">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password"><br><br>
+        <input type="submit" value="Login">
+    </form>
+    
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            const form = event.target;
+            const formData = new FormData(form); // Get form data
+            
+            fetch('/login', {
+                method: 'POST',
+                body: formData // Send form data to the /login route
+            })
+            .then(response => {
+                if (response.ok) {
+
+                    window.location.href = '/home'; // Redirect to /home after successful login (status code 200)
+                } else if (response.status === 401) {
+                    document.getElementById('error').style.display = 'block'; // Display error message for status code 401
+                } else {
+                    console.error('Error:', response.status);
+                }
+            })
+            .catch(error => {
+                console.error('Login failed:', error.message);
+            });
+        });
+    </script>
+</body>
+</html>

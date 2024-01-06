@@ -47,7 +47,7 @@ def create_master_user(master_username, master_password):
         if 'connection' in locals() and connection.is_connected():
             connection.close()
 
-def login_user(master_username, master_password):
+def login_user(master_username, master_password:str):
 
     password = master_username[::-1] + master_password
 
@@ -62,20 +62,20 @@ def login_user(master_username, master_password):
         user_data = cursor.fetchone()
 
         if user_data:
-
             hashed_password_from_db = user_data[0]
 
             # Verify the entered password against the hashed password
             if verify_password(password, hashed_password_from_db):
                 LoggedIn = True
                 print("Login successful! Welcome, {}.".format(master_username))
-
-
+                return LoggedIn
             else:
-                LoggedIn = False
-                print("Invalid password. Login failed.")
+                return False
+            
         else:
-            print("User '{}' does not exist.".format(username))
+            LoggedIn = False
+            print("Invalid password. Login failed.")
+            return LoggedIn
 
     except mysql.connector.Error as error:
         print("Error while logging in: {}".format(error))
@@ -86,7 +86,6 @@ def login_user(master_username, master_password):
         else:
             print('no master key found')
 
-    return LoggedIn
     
 def delete_user(master_username, master_password):
 
@@ -96,12 +95,12 @@ def delete_user(master_username, master_password):
             delete_user_query = '''
                 DELETE FROM Users WHERE username = %s;
             '''
-            cursor.execute(delete_user_query, (username,))
+            cursor.execute(delete_user_query, (master_username,))
             connection.commit()
             if cursor.rowcount > 0:
-                print(f"User '{username}' deleted successfully.")
+                print(f"User '{master_username}' deleted successfully.")
             else:
-                print("User '{}' does not exist.".format(username))
+                print("User '{}' does not exist.".format(master_username))
         except mysql.connector.Error as error:
             print("Error deleting user: {}".format(error))
         finally:
@@ -111,10 +110,10 @@ def delete_user(master_username, master_password):
         print('Unnable to Loggin. No changes have been placed')
 
 if __name__ == '__main__':
-    username = input('Enter Username:')
-    password = input('Enter Password: ')
-
-    create_master_user(username, password)
+    #username = input('Enter Username:')
+    #password = input('Enter Password: ')
+    pass
+    #create_master_user(username, password)
     #login_user(username, password)
     #delete_user(username, password)
 
